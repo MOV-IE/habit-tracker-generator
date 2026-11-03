@@ -1,6 +1,6 @@
 // 공공데이터포털 '한국천문연구원_특일 정보' API에서 공휴일을 받아 holidays.json에 합쳐요.
 // GitHub Actions에서 HOLIDAY_API_KEY 환경변수(저장소 Secret)로 실행돼요.
-// 받아 온 해는 그 해 자료를 통째로 바꾸고 'years'에 기록해요. 자료가 아직 없는 해는 건너뛰어요.
+// 받아 온 해는 그 해 자료를 통째로 바꾸고 'years'에 기록해요. 자료가 아직 없는 해는 기존 값(추정 자료)을 그대로 둬요.
 import { readFile, writeFile } from 'node:fs/promises';
 
 const FILE = new URL('../holidays.json', import.meta.url);
@@ -66,7 +66,7 @@ async function main() {
   const out = {
     updated: now.toISOString().slice(0, 10),
     source: `한국천문연구원 특일 정보 API (${done.join(', ')}년 반영)`,
-    years: yearsOut, // 공휴일이 발표된 해. 페이지는 이 해들만 고를 수 있어요.
+    years: yearsOut, // API로 확인된 해
     holidays: sorted,
   };
   await writeFile(FILE, JSON.stringify(out, null, 1) + '\n');
