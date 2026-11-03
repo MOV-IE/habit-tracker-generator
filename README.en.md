@@ -36,7 +36,7 @@ Your settings are saved in the browser, so they're still there next time. Click 
 
 ### Fonts
 
-The default font is Futura. If your computer has Futura (Macs do), it's used; otherwise the similar free font Jost is used instead. Habit names are often in Korean, so pick a Korean font under **습관 이름 폰트** (Habit name font), such as Apple SD Gothic Neo, AppleMyungjo, or a Nanum font. For any other installed font, choose **직접 입력…** (Custom) and type its name.
+The default font is Futura. If your computer has Futura (Macs do), it's used; otherwise the similar free font Jost is used instead. The title and habit names can each have their own font (**제목 폰트** / **습관 이름 폰트**). Habit names are often in Korean, so a Korean font such as Apple SD Gothic Neo, Malgun Gothic, a Myeongjo font, or a Nanum font works well. Any font installed on your computer (Mac or Windows) can be used by choosing **직접 입력…** (Custom) and typing its name.
 
 ## Automatic holiday updates
 

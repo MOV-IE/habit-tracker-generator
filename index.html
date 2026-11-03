@@ -105,24 +105,37 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
       <option value="custom">직접 입력…</option>
     </select></div>
     <div class="row" id="customFontRow"><label>폰트 이름</label><input type="text" data-k="customFont" placeholder="예: Gill Sans"></div>
+    <div class="row"><label>제목 폰트</label><select data-k="titleFont">
+      <option value="same">동일</option>
+      <option value="'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR'">애플 SD 산돌고딕</option>
+      <option value="'Malgun Gothic', 'Apple SD Gothic Neo'">맑은 고딕</option>
+      <option value="'AppleMyungjo', 'Batang', 'Nanum Myeongjo', 'Noto Serif KR', serif">애플 명조 / 바탕</option>
+      <option value="'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic'">나눔고딕</option>
+      <option value="'Nanum Myeongjo', 'AppleMyungjo', 'Batang', serif">나눔명조</option>
+      <option value="'Nanum Pen Script', 'Nanum Pen', cursive">나눔손글씨 펜</option>
+      <option value="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic'">Pretendard</option>
+      <option value="custom">직접 입력…</option>
+    </select></div>
+    <div class="row" id="customTitleFontRow"><label>폰트 이름</label><input type="text" data-k="customTitleFont" placeholder="예: Didot"></div>
     <div class="row"><label>습관 이름 폰트</label><select data-k="nameFont">
       <option value="same">동일</option>
-      <option value="'Apple SD Gothic Neo', 'Noto Sans KR'">애플 SD 산돌고딕</option>
-      <option value="'AppleMyungjo', 'Nanum Myeongjo', 'Noto Serif KR', serif">애플 명조</option>
-      <option value="'Nanum Gothic', 'Apple SD Gothic Neo'">나눔고딕</option>
-      <option value="'Nanum Myeongjo', 'AppleMyungjo', serif">나눔명조</option>
+      <option value="'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR'">애플 SD 산돌고딕</option>
+      <option value="'Malgun Gothic', 'Apple SD Gothic Neo'">맑은 고딕</option>
+      <option value="'AppleMyungjo', 'Batang', 'Nanum Myeongjo', 'Noto Serif KR', serif">애플 명조 / 바탕</option>
+      <option value="'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic'">나눔고딕</option>
+      <option value="'Nanum Myeongjo', 'AppleMyungjo', 'Batang', serif">나눔명조</option>
       <option value="'Nanum Pen Script', 'Nanum Pen', cursive">나눔손글씨 펜</option>
-      <option value="Pretendard, 'Apple SD Gothic Neo'">Pretendard</option>
+      <option value="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic'">Pretendard</option>
       <option value="custom">직접 입력…</option>
     </select></div>
     <div class="row" id="customNameFontRow"><label>폰트 이름</label><input type="text" data-k="customNameFont" placeholder="예: 마루 부리"></div>
     <div class="row"><label>습관 이름 기울임</label><input type="checkbox" data-k="nameItalic"></div>
-    <p class="hint">습관 이름에만 따로 적용돼요. 맥에 설치된 폰트 이름이면 ‘직접 입력’으로 무엇이든 쓸 수 있어요.</p>
+    <p class="hint">제목과 습관 이름은 따로 폰트를 고를 수 있어요. 목록에 없는 폰트도 컴퓨터(맥, 윈도우 모두)에 설치돼 있으면 ‘직접 입력’에 이름을 적어 쓸 수 있어요.</p>
     <div class="row"><label>월 글자 크기 (pt)</label><input type="number" data-k="fsMonth" step=".5"></div>
-    <div class="row"><label>요일 글자 (pt)</label><input type="number" data-k="fsDay" step=".5"></div>
+    <div class="row" id="fsDayRow"><label>요일 글자 (pt)</label><input type="number" data-k="fsDay" step=".5"></div>
     <div class="row"><label>날짜 글자 (pt)</label><input type="number" data-k="fsDate" step=".5"></div>
     <div class="row"><label>습관 이름 글자 (pt)</label><input type="number" data-k="fsName" step=".5"></div>
-    <div class="row"><label>요일·날짜 기울임</label><input type="checkbox" data-k="italic"></div>
+    <div class="row"><label>날짜 기울임</label><input type="checkbox" data-k="italic"></div>
   </fieldset>
 
   <fieldset><legend>색과 선</legend>
@@ -178,7 +191,7 @@ let HOL = {"2025-01-01": "1월1일", "2025-01-27": "임시공휴일", "2025-01-2
 const DEFAULTS = {
   mode:'dated', year:2027, from:1, to:12, style:'1jan', yearPos:'br', title:'',
   rowsN:12, nameW:30, sum:false, dow:'none', vlines:'light', weekLine:false, shade:false, habits:'',
-  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, fsTitle:9, titleItalic:true, italic:true, nameFont:'same', customNameFont:'', nameItalic:false,
+  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, fsTitle:9, titleItalic:true, titleFont:'same', customTitleFont:'', italic:true, nameFont:'same', customNameFont:'', nameItalic:false,
   lineColor:'#5b4636', lineW:.15, ink:'#2b2b2b', red:'#c8463a', yearColor:'#888888', shadeColor:'#f4efeb', satColor:false, sat:'#3a62a8',
   holidays:true, extraRed:'',
   w:86, h:171, mRing:7, mFree:5, mEnd:5, turn:'cw',
@@ -198,11 +211,13 @@ function fontStack() {
   const f = st.font === 'custom' ? (st.customFont ? `'${st.customFont}', Jost` : 'Jost') : st.font;
   return f + ', sans-serif';
 }
-function nameFontStack() {
-  if (st.nameFont === 'same') return fontStack();
-  const f = st.nameFont === 'custom' ? (st.customNameFont ? `'${st.customNameFont}'` : 'Jost') : st.nameFont;
+function pickFont(sel, custom) {
+  if (sel === 'same') return fontStack();
+  const f = sel === 'custom' ? (custom ? `'${custom}'` : 'Jost') : sel;
   return f + ', ' + fontStack();
 }
+const nameFontStack = () => pickFont(st.nameFont, st.customNameFont);
+const titleFontStack = () => pickFont(st.titleFont, st.customTitleFont);
 function redSet() {
   const s = new Set();
   if (st.holidays) Object.keys(HOL).forEach(k => s.add(k));
@@ -221,7 +236,7 @@ function css() {
 .nm{font-size:${st.fsName}pt;font-family:${nameFontStack()};font-style:${st.nameItalic?'italic':'normal'}}
 .mon .m{font-size:${st.fsMonth}pt}
 .mon .ab{font-size:${st.fsMonth*.42}pt;font-weight:600}
-.ttl{font-size:${st.fsTitle}pt;font-style:${st.titleItalic?'italic':'normal'};letter-spacing:.8pt;color:${st.ink};position:absolute;line-height:1;white-space:nowrap}
+.ttl{font-family:${titleFontStack()};font-size:${st.fsTitle}pt;font-style:${st.titleItalic?'italic':'normal'};letter-spacing:.8pt;color:${st.ink};position:absolute;line-height:1;white-space:nowrap}
 .yb{position:absolute;font-size:5.5pt;letter-spacing:.3pt;color:${st.yearColor}}
 .red{color:${st.red}} .sat{color:${st.sat}}
 .ht{border-top:${lw}mm solid ${lc}}
@@ -388,6 +403,8 @@ function render() {
   document.getElementById('pages').innerHTML = html;
   document.getElementById('customFontRow').style.display = st.font === 'custom' ? '' : 'none';
   document.getElementById('shadeRow').style.display = st.shade ? '' : 'none';
+  document.getElementById('customTitleFontRow').style.display = st.titleFont === 'custom' ? '' : 'none';
+  document.getElementById('fsDayRow').style.display = st.dow === 'none' ? 'none' : '';
   document.getElementById('customNameFontRow').style.display = st.nameFont === 'custom' ? '' : 'none';
   document.getElementById('satRow').style.display = st.satColor ? '' : 'none';
   ['cropRow','orientRow','safeRow'].forEach(id => document.getElementById(id).style.display = st.sheet === 'orig' ? 'none' : '');
