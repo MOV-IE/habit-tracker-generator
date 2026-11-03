@@ -36,6 +36,8 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 .sheet{overflow:hidden;background:#fff;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.12)}
 .sheet .page{position:absolute}
 .cm{position:absolute;background:#000}
+.ringstrip{position:absolute;left:0;right:0;height:8.4mm;background:rgba(139,107,88,.07);pointer-events:none}
+.ringhole{position:absolute;width:5mm;height:5mm;border-radius:50%;border:.3mm dashed #b9a597;background:#ecebe8;pointer-events:none}
 .solo{box-shadow:0 1px 6px rgba(0,0,0,.12)}
 /* page */
 .page{position:relative;overflow:hidden;background:#fff}
@@ -50,6 +52,7 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 @media print{
   html,body{background:#fff;display:block;min-height:0 !important;height:auto !important}
   #panel{display:none}
+  .ringstrip,.ringhole{display:none !important}
   #stage{padding:0;overflow:visible}
   #pages{display:block;zoom:1 !important}
   .solo{box-shadow:none;break-after:page;page-break-after:always}
@@ -154,6 +157,7 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
   </fieldset>
 
   <fieldset><legend>미리보기</legend>
+    <div class="row"><label>링 위치 표시</label><input type="checkbox" data-k="showRing"></div>
     <div class="row"><label>출력본 그대로 보기</label><input type="checkbox" data-k="outView"></div>
     <p class="hint">끄면 속지를 눕혀서 쓰는 방향(가로)으로 보여 줘요. 켜면 실제로 인쇄되는 모양(세로로 돌아간 속지, 용지 배치)을 보여 줘요. 어느 쪽이든 PDF는 똑같이 저장돼요.</p>
     <div class="row"><label>확대</label><input type="range" data-k="zoom" min="1" max="4" step=".1" style="width:130px"></div>
@@ -175,7 +179,7 @@ const DEFAULTS = {
   lineColor:'#5b4636', lineW:.15, ink:'#2b2b2b', red:'#c8463a', yearColor:'#888888', shadeColor:'#f4efeb', satColor:false, sat:'#3a62a8',
   holidays:true, extraRed:'',
   w:86, h:171, mRing:7, mFree:5, mEnd:5, turn:'cw',
-  sheet:'orig', orient:'auto', safe:5, duplex:'single', crop:true, zoom:1.8, outView:false
+  sheet:'orig', orient:'auto', safe:5, duplex:'single', crop:true, zoom:1.8, outView:false, showRing:true
 };
 const KEY = 'habit-tracker-editor-v2';
 let st = {...DEFAULTS};
@@ -287,8 +291,18 @@ function trackerPage(y, m, back, flat) {
   const tf = st.turn === 'cw'
     ? `transform:translateY(${st.h}mm) rotate(-90deg)`   // canvas top -> page left (ring side of a right-hand page)
     : `transform:translateX(${st.w}mm) rotate(90deg)`;   // canvas top -> page right
-  if (flat) return `<section class="page solo" style="width:${st.h}mm;height:${st.w}mm"><div class="land">${inner}</div></section>`;
-  return `<section class="page"><div class="land" style="${tf}">${inner}</div></section>`;
+  // 링 위치 표시 (화면에서만, 인쇄되지 않아요): 6공 바이블 규격 19-19-51-19-19mm
+  let ring = '';
+  if (st.showRing && !printing) {
+    const cx = W / 2, edge = ringTop ? 0 : H, cy = ringTop ? 4.2 : H - 4.2;
+    ring += `<div class="ringstrip" style="top:${ringTop ? 0 : H - 8.4}mm"></div>`;
+    [-63.5, -44.5, -25.5, 25.5, 44.5, 63.5].forEach(dx => {
+      ring += `<div class="ringhole" style="left:${cx + dx - 2.5}mm;top:${cy - 2.5}mm"></div>`;
+    });
+  }
+  const innerR = inner + ring;
+  if (flat) return `<section class="page solo" style="width:${st.h}mm;height:${st.w}mm"><div class="land">${innerR}</div></section>`;
+  return `<section class="page"><div class="land" style="${tf}">${innerR}</div></section>`;
 }
 
 const PAPERS = { a4: [210, 297], a3: [297, 420] };
