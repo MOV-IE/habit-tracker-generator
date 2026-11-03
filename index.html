@@ -241,7 +241,11 @@ function trackerPage(y, m, back, flat) {
   const hasDow = st.dow !== 'none' && !!y;
   const N = Math.max(1, +st.rowsN);
   const habits = String(st.habits).split('\n');
-  const cols = `${st.nameW}mm repeat(31,1fr)${st.sum ? ' 7mm' : ''}`;
+  // 합계 칸은 그 달 마지막 날 바로 옆에 붙여요. 날짜 칸 폭은 달마다 같게 둬요.
+  const cols = st.sum
+    ? `${st.nameW}mm repeat(${nDays},1fr) 7mm${nDays < 31 ? ` repeat(${31 - nDays},1fr)` : ''}`
+    : `${st.nameW}mm repeat(31,1fr)`;
+  const sumCol = nDays + 2;
   const dowH = hasDow ? 3.6 : 0, dateH = 4.6;
   const rowsT = `${hasDow ? dowH + 'mm ' : ''}${dateH}mm repeat(${N},1fr)`;
   const hr = hasDow ? 2 : 1; // row index of date numbers
@@ -281,9 +285,9 @@ function trackerPage(y, m, back, flat) {
   for (let r = 0; r < N; r++) {
     const name = habits[r] ? esc(habits[r].trim()) : '';
     g += `<div class="nm ht" style="grid-row:${hr+1+r};grid-column:1">${name}</div>`;
-    if (st.sum) g += `<div class="cell ht vs" style="grid-row:${hr+1+r};grid-column:33"></div>`;
+    if (st.sum) g += `<div class="cell ht vs" style="grid-row:${hr+1+r};grid-column:${sumCol}"></div>`;
   }
-  if (st.sum) g += `<div class="dt" style="grid-row:${hr};grid-column:33">✓</div>`;
+  if (st.sum) g += `<div class="dt" style="grid-row:${hr};grid-column:${sumCol}">✓</div>`;
 
   const title = st.title ? `<div class="ttl" style="position:absolute;right:${side}mm;top:${Math.max(1, top - 4.2)}mm">${esc(st.title)}</div>` : '';
   const yb = (y && st.yearPos === 'br') ? `<div class="yb" style="right:${side}mm;bottom:${Math.max(1, bot - 3.6)}mm">${y}</div>` : '';
