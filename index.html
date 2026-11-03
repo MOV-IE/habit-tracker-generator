@@ -77,7 +77,8 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
     <div class="row"><label>달 표시</label><div class="seg" data-k="style"><button data-v="1">1</button><button data-v="01">01</button><button data-v="jan">jan</button><button data-v="1jan">1 jan.</button></div></div>
     <div class="row"><label>연도 표시</label><div class="seg" data-k="yearPos"><button data-v="br">아래</button><button data-v="none">없음</button></div></div>
     <div class="row"><label>제목</label><input type="text" data-k="title" placeholder="예: habit tracker"></div>
-    <p class="hint">제목을 비워 두면 표시하지 않아요.</p>
+    <div class="row"><label>제목 글자 (pt)</label><input type="number" data-k="fsTitle" step=".5"></div>
+    <p class="hint">제목은 표 위에 들어가고, 그만큼 표가 아래로 내려가요. 비워 두면 표시하지 않아요.</p>
   </fieldset>
 
   <fieldset><legend>트래커</legend>
@@ -176,7 +177,7 @@ let HOL = {"2025-01-01": "1월1일", "2025-01-27": "임시공휴일", "2025-01-2
 const DEFAULTS = {
   mode:'dated', year:2027, from:1, to:12, style:'1jan', yearPos:'br', title:'',
   rowsN:12, nameW:30, sum:false, dow:'none', vlines:'light', weekLine:false, shade:false, habits:'',
-  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, italic:true, nameFont:'same', customNameFont:'', nameItalic:false,
+  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, fsTitle:9, italic:true, nameFont:'same', customNameFont:'', nameItalic:false,
   lineColor:'#5b4636', lineW:.15, ink:'#2b2b2b', red:'#c8463a', yearColor:'#888888', shadeColor:'#f4efeb', satColor:false, sat:'#3a62a8',
   holidays:true, extraRed:'',
   w:86, h:171, mRing:7, mFree:5, mEnd:5, turn:'cw',
@@ -219,7 +220,7 @@ function css() {
 .nm{font-size:${st.fsName}pt;font-family:${nameFontStack()};font-style:${st.nameItalic?'italic':'normal'}}
 .mon .m{font-size:${st.fsMonth}pt}
 .mon .ab{font-size:${st.fsMonth*.42}pt;font-weight:600}
-.ttl{font-size:${st.fsDay+1}pt;letter-spacing:.6pt;color:${st.yearColor}}
+.ttl{font-size:${st.fsTitle}pt;letter-spacing:.8pt;color:${st.ink};position:absolute;line-height:1;white-space:nowrap}
 .yb{position:absolute;font-size:5.5pt;letter-spacing:.3pt;color:${st.yearColor}}
 .red{color:${st.red}} .sat{color:${st.sat}}
 .ht{border-top:${lw}mm solid ${lc}}
@@ -287,9 +288,11 @@ function trackerPage(y, m, back, flat) {
   }
   if (st.sum) g += `<div class="dt" style="grid-row:${hr};grid-column:${sumCol}">✓</div>`;
 
-  const title = st.title ? `<div class="ttl" style="position:absolute;right:${side}mm;top:${Math.max(1, top - 4.2)}mm">${esc(st.title)}</div>` : '';
+  // 제목은 표 위에 한 줄로 두고, 그만큼 표를 아래로 밀어요
+  const titleH = st.title ? +st.fsTitle * 0.353 + 4.5 : 0;
+  const title = st.title ? `<div class="ttl" style="left:${side}mm;top:${top}mm">${esc(st.title)}</div>` : '';
   const yb = (y && st.yearPos === 'br') ? `<div class="yb" style="right:${side}mm;bottom:${Math.max(1, bot - 3.6)}mm">${y}</div>` : '';
-  const inner = `<div class="g" style="left:${side}mm;right:${side}mm;top:${top}mm;bottom:${bot}mm;grid-template-columns:${cols};grid-template-rows:${rowsT}">${g}</div>${title}${yb}`;
+  const inner = `<div class="g" style="left:${side}mm;right:${side}mm;top:${top + titleH}mm;bottom:${bot}mm;grid-template-columns:${cols};grid-template-rows:${rowsT}">${g}</div>${title}${yb}`;
   // rotate landscape canvas onto the portrait page
   const tf = st.turn === 'cw'
     ? `transform:translateY(${st.h}mm) rotate(-90deg)`   // canvas top -> page left (ring side of a right-hand page)
