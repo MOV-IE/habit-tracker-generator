@@ -1,5 +1,7 @@
 # Habit Tracker Generator
 
+[English](README.en.md) | **한국어**
+
 시스템 다이어리용 해빗트래커 속지를 만들어 PDF로 저장하는 편집 도구예요. 설치 없이 브라우저에서 바로 써요.
 
 **바로 쓰기:** https://mov-ie.github.io/habit-tracker-generator/
