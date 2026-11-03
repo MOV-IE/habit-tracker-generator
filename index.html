@@ -135,7 +135,6 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
     <div class="row" id="fsDayRow"><label>요일 글자 (pt)</label><input type="number" data-k="fsDay" step=".5"></div>
     <div class="row"><label>날짜 글자 (pt)</label><input type="number" data-k="fsDate" step=".5"></div>
     <div class="row"><label>습관 이름 글자 (pt)</label><input type="number" data-k="fsName" step=".5"></div>
-    <div class="row"><label>날짜 기울임</label><input type="checkbox" data-k="italic"></div>
   </fieldset>
 
   <fieldset><legend>색과 선</legend>
@@ -191,7 +190,7 @@ let HOL = {"2025-01-01": "1월1일", "2025-01-27": "임시공휴일", "2025-01-2
 const DEFAULTS = {
   mode:'dated', year:2027, from:1, to:12, style:'1jan', yearPos:'br', title:'',
   rowsN:12, nameW:30, sum:false, dow:'none', vlines:'light', weekLine:false, shade:false, habits:'',
-  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, fsTitle:9, titleItalic:true, titleFont:'same', customTitleFont:'', italic:true, nameFont:'same', customNameFont:'', nameItalic:false,
+  font:"Futura, 'Futura PT', Jost", customFont:'', fsMonth:18, fsDay:5, fsDate:6, fsName:6.5, fsTitle:9, titleItalic:true, titleFont:'same', customTitleFont:'', nameFont:'same', customNameFont:'', nameItalic:false,
   lineColor:'#5b4636', lineW:.15, ink:'#2b2b2b', red:'#c8463a', yearColor:'#888888', shadeColor:'#f4efeb', satColor:false, sat:'#3a62a8',
   holidays:true, extraRed:'',
   w:86, h:171, mRing:7, mFree:5, mEnd:5, turn:'cw',
@@ -231,8 +230,8 @@ function css() {
   document.getElementById('dyn').textContent = `
 .page{width:${st.w}mm;height:${st.h}mm;font-family:${fontStack()};color:${st.ink}}
 .land{width:${st.h}mm;height:${st.w}mm}
-.dw{font-size:${st.fsDay}pt;font-style:${st.italic?'italic':'normal'}}
-.dt{font-size:${st.fsDate}pt;font-style:${st.italic?'italic':'normal'}}
+.dw{font-size:${st.fsDay}pt;font-style:italic}
+.dt{font-size:${st.fsDate}pt;font-style:italic}
 .nm{font-size:${st.fsName}pt;font-family:${nameFontStack()};font-style:${st.nameItalic?'italic':'normal'}}
 .mon .m{font-size:${st.fsMonth}pt}
 .mon .ab{font-size:${st.fsMonth*.42}pt;font-weight:600}
