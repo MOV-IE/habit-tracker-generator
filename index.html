@@ -152,7 +152,7 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
     <div class="row"><label>용지</label><div class="seg" data-k="sheet"><button data-v="orig">속지 크기</button><button data-v="a4">A4</button><button data-v="a3">A3</button></div></div>
     <div class="row" id="orientRow"><label>방향</label><div class="seg" data-k="orient"><button data-v="auto">자동</button><button data-v="portrait">세로</button><button data-v="landscape">가로</button></div></div>
     <div class="row" id="safeRow"><label>프린터 안전 여백 (mm)</label><input type="number" data-k="safe" step="1" min="0"></div>
-    <div class="row" id="dupRow"><label>배치</label><div class="seg" data-k="duplex"><button data-v="single">단면</button><button data-v="duplex">양면</button></div></div>
+    <div class="row" id="dupRow"><label>인쇄 면</label><div class="seg" data-k="duplex"><button data-v="single">단면</button><button data-v="duplex">양면</button></div></div>
     <div class="row" id="cropRow"><label>재단선</label><input type="checkbox" data-k="crop"></div>
     <p class="hint" id="sheetHint"></p>
   </fieldset>
@@ -345,11 +345,12 @@ function render() {
     const a = Math.max(1, Math.min(12, +st.from)), b = Math.max(a, Math.min(12, +st.to));
     for (let m = a; m <= b; m++) months.push([+st.year, m]);
   }
-  const pages = months.map(([y, m], i) => trackerPage(y, m, i % 2 === 1));
+  const isBack = i => st.duplex === 'duplex' && i % 2 === 1; // 단면이면 모두 앞면(링이 같은 쪽)
+  const pages = months.map(([y, m], i) => trackerPage(y, m, isBack(i)));
   let html = '', hint = '';
   if (st.sheet === 'orig') {
     html = pages.map(p => p.replace('<section class="page', '<section class="page solo')).join('');
-    hint = '속지 크기 그대로 한 달에 한 쪽씩 저장해요.';
+    hint = st.duplex === 'duplex' ? '속지 크기 그대로 저장해요. 양면이라 짝수 쪽은 뒷면으로 보고 링 쪽을 반대로 둬요.' : '속지 크기 그대로 저장해요. 단면이라 모든 쪽의 링 위치가 같아요(뒷면은 비워 둬요).';
   } else {
     const o = layout();
     const name = st.sheet.toUpperCase() + (o.land ? ' 가로' : ' 세로');
@@ -373,7 +374,7 @@ function render() {
     document.getElementById('dyn').textContent += `\n@page{size:${o.W}mm ${o.H}mm;margin:0}`;
   }
   if (!st.outView && !printing) {
-    html = months.map(([y, m], i) => trackerPage(y, m, i % 2 === 1, true)).join('');
+    html = months.map(([y, m], i) => trackerPage(y, m, isBack(i), true)).join('');
     document.getElementById('dyn').textContent += `\n#pages{zoom:${st.zoom}}`;
   }
   document.getElementById('sheetHint').innerHTML = hint;
@@ -382,7 +383,7 @@ function render() {
   document.getElementById('shadeRow').style.display = st.shade ? '' : 'none';
   document.getElementById('customNameFontRow').style.display = st.nameFont === 'custom' ? '' : 'none';
   document.getElementById('satRow').style.display = st.satColor ? '' : 'none';
-  ['dupRow','cropRow','orientRow','safeRow'].forEach(id => document.getElementById(id).style.display = st.sheet === 'orig' ? 'none' : '');
+  ['cropRow','orientRow','safeRow'].forEach(id => document.getElementById(id).style.display = st.sheet === 'orig' ? 'none' : '');
   save();
 }
 
