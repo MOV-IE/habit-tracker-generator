@@ -41,7 +41,7 @@ The default font is Futura. If your computer has Futura (Macs do), it's used; ot
 Holidays live in `holidays.json`, which the page reads when it opens.
 
 - On the 1st of every month, **GitHub Actions** fetches holidays from last year through two years ahead using the *KASI Special Day Information* API (한국천문연구원 특일 정보) on the Korean Public Data Portal, and updates `holidays.json`. Substitute and temporary holidays are included once announced.
-- Years the government hasn't announced yet keep their existing values and are filled in automatically on a later run.
+- The year picker only allows years whose holidays have been announced. When a new year is announced, it's added on the next run and becomes selectable automatically.
 - GitHub Actions is free for public repositories.
 - The workflow re-enables itself on every run, so the schedule doesn't pause after 60 days without repository activity.
 

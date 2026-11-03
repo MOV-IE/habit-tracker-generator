@@ -1,6 +1,6 @@
 // 공공데이터포털 '한국천문연구원_특일 정보' API에서 공휴일을 받아 holidays.json에 합쳐요.
 // GitHub Actions에서 HOLIDAY_API_KEY 환경변수(저장소 Secret)로 실행돼요.
-// 받아 온 해는 그 해 자료를 통째로 바꾸고, 자료가 아직 없는 해(먼 미래)는 기존 값을 그대로 둬요.
+// 받아 온 해는 그 해 자료를 통째로 바꾸고 'years'에 기록해요. 자료가 아직 없는 해는 건너뛰어요.
 import { readFile, writeFile } from 'node:fs/promises';
 
 const FILE = new URL('../holidays.json', import.meta.url);
@@ -15,7 +15,7 @@ const encKey = /%[0-9A-Fa-f]{2}/.test(key) ? key : encodeURIComponent(key);
 
 const now = new Date();
 const thisYear = now.getFullYear();
-const years = [thisYear - 1, thisYear, thisYear + 1, thisYear + 2];
+const years = Array.from({ length: 7 }, (_, i) => thisYear - 1 + i); // 작년부터 5년 뒤까지 물어봐요
 
 export function parseItems(json) {
   const body = json?.response?.body;
@@ -47,6 +47,7 @@ async function fetchYear(y) {
 async function main() {
   const data = JSON.parse(await readFile(FILE, 'utf8'));
   const hol = { ...data.holidays };
+  const confirmed = new Set(data.years || []);
   const done = [];
   for (const y of years) {
     const got = await fetchYear(y);
@@ -54,15 +55,18 @@ async function main() {
     if (!n) { console.log(`${y}년: 아직 발표된 자료가 없어 기존 값을 둬요.`); continue; }
     for (const k of Object.keys(hol)) if (k.startsWith(`${y}-`)) delete hol[k];
     Object.assign(hol, got);
+    confirmed.add(y);
     done.push(y);
     console.log(`${y}년: 공휴일 ${n}일`);
   }
   const sorted = Object.fromEntries(Object.entries(hol).sort(([a], [b]) => a.localeCompare(b)));
-  const changed = JSON.stringify(sorted) !== JSON.stringify(data.holidays);
+  const yearsOut = [...confirmed].sort((a, b) => a - b);
+  const changed = JSON.stringify(sorted) !== JSON.stringify(data.holidays) || JSON.stringify(yearsOut) !== JSON.stringify(data.years);
   if (!changed) { console.log('바뀐 공휴일이 없어요.'); return; }
   const out = {
     updated: now.toISOString().slice(0, 10),
     source: `한국천문연구원 특일 정보 API (${done.join(', ')}년 반영)`,
+    years: yearsOut, // 공휴일이 발표된 해. 페이지는 이 해들만 고를 수 있어요.
     holidays: sorted,
   };
   await writeFile(FILE, JSON.stringify(out, null, 1) + '\n');
