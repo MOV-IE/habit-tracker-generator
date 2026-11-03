@@ -30,24 +30,21 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 .btn{display:block;width:100%;margin-top:10px;padding:10px;border:none;border-radius:8px;background:#8b6b58;color:#fff;font:600 14px inherit;cursor:pointer}
 .btn.ghost{background:#f3ece7;color:#8b6b58}
 #stage{flex:1;padding:24px;overflow:auto}
-#pages{display:flex;flex-wrap:wrap;gap:22px;transform-origin:0 0}
-.sheetwrap{}
+#pages{display:flex;flex-wrap:wrap;gap:22px}
 .sheetlbl{font-size:10px;color:#777;margin-bottom:4px}
 .sheet{overflow:hidden;background:#fff;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.12)}
 .sheet .page{position:absolute}
 .cm{position:absolute;background:#000}
-.ringstrip{position:absolute;left:0;right:0;height:8.4mm;background:rgba(139,107,88,.07);pointer-events:none}
-.ringhole{position:absolute;width:5mm;height:5mm;border-radius:50%;border:.3mm dashed #b9a597;background:#ecebe8;pointer-events:none}
+.ringstrip{position:absolute;left:0;right:0;background:rgba(139,107,88,.07);pointer-events:none}
+.ringhole{position:absolute;border-radius:50%;border:.3mm dashed #b9a597;background:#ecebe8;pointer-events:none}
 .solo{box-shadow:0 1px 6px rgba(0,0,0,.12)}
 /* page */
 .page{position:relative;overflow:hidden;background:#fff}
 .land{position:absolute;left:0;top:0;transform-origin:0 0}
 .g{position:absolute;display:grid}
-.cell{position:relative}
 .dw,.dt{display:flex;align-items:center;justify-content:center;line-height:1}
 .mon{display:flex;align-items:baseline;gap:1.2mm;line-height:1;align-self:end;padding-bottom:1mm;white-space:nowrap}
 .mon .blank{display:inline-block;width:12mm;height:5mm}
-.ttl{display:flex;align-items:flex-end;padding-bottom:1mm;line-height:1}
 .nm{display:flex;align-items:center;padding-left:1mm}
 @media print{
   html,body{background:#fff;display:block;min-height:0 !important;height:auto !important}
@@ -105,29 +102,9 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
       <option value="custom">직접 입력…</option>
     </select></div>
     <div class="row" id="customFontRow"><label>폰트 이름</label><input type="text" data-k="customFont" placeholder="예: Gill Sans"></div>
-    <div class="row"><label>제목 폰트</label><select data-k="titleFont">
-      <option value="same">동일</option>
-      <option value="'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR'">애플 SD 산돌고딕</option>
-      <option value="'Malgun Gothic', 'Apple SD Gothic Neo'">맑은 고딕</option>
-      <option value="'AppleMyungjo', 'Batang', 'Nanum Myeongjo', 'Noto Serif KR', serif">애플 명조 / 바탕</option>
-      <option value="'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic'">나눔고딕</option>
-      <option value="'Nanum Myeongjo', 'AppleMyungjo', 'Batang', serif">나눔명조</option>
-      <option value="'Nanum Pen Script', 'Nanum Pen', cursive">나눔손글씨 펜</option>
-      <option value="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic'">Pretendard</option>
-      <option value="custom">직접 입력…</option>
-    </select></div>
+    <div class="row"><label>제목 폰트</label><select data-k="titleFont" class="krfont"></select></div>
     <div class="row" id="customTitleFontRow"><label>폰트 이름</label><input type="text" data-k="customTitleFont" placeholder="예: Didot"></div>
-    <div class="row"><label>습관 이름 폰트</label><select data-k="nameFont">
-      <option value="same">동일</option>
-      <option value="'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR'">애플 SD 산돌고딕</option>
-      <option value="'Malgun Gothic', 'Apple SD Gothic Neo'">맑은 고딕</option>
-      <option value="'AppleMyungjo', 'Batang', 'Nanum Myeongjo', 'Noto Serif KR', serif">애플 명조 / 바탕</option>
-      <option value="'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic'">나눔고딕</option>
-      <option value="'Nanum Myeongjo', 'AppleMyungjo', 'Batang', serif">나눔명조</option>
-      <option value="'Nanum Pen Script', 'Nanum Pen', cursive">나눔손글씨 펜</option>
-      <option value="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic'">Pretendard</option>
-      <option value="custom">직접 입력…</option>
-    </select></div>
+    <div class="row"><label>습관 이름 폰트</label><select data-k="nameFont" class="krfont"></select></div>
     <div class="row" id="customNameFontRow"><label>폰트 이름</label><input type="text" data-k="customNameFont" placeholder="예: 마루 부리"></div>
     <div class="row"><label>습관 이름 기울임</label><input type="checkbox" data-k="nameItalic"></div>
     <p class="hint">제목과 습관 이름은 따로 폰트를 고를 수 있어요. 목록에 없는 폰트도 PC(맥, 윈도우 모두)에 설치돼 있으면 ‘직접 입력’에 이름을 적어 쓸 수 있어요.</p>
@@ -207,12 +184,26 @@ const pad = n => String(n).padStart(2,'0');
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 function fontStack() {
-  const f = st.font === 'custom' ? (st.customFont ? `'${st.customFont}', Jost` : 'Jost') : st.font;
+  const f = st.font === 'custom' ? (st.customFont ? `${quoteFont(st.customFont)}, Jost` : 'Jost') : st.font;
   return f + ', sans-serif';
 }
+// 제목·습관 이름용 폰트 목록 (두 선택 칸이 같은 목록을 써요)
+const KR_FONTS = [
+  ['same', '동일'],
+  ["'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR'", '애플 SD 산돌고딕'],
+  ["'Malgun Gothic', 'Apple SD Gothic Neo'", '맑은 고딕'],
+  ["'AppleMyungjo', 'Batang', 'Nanum Myeongjo', 'Noto Serif KR', serif", '애플 명조 / 바탕'],
+  ["'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic'", '나눔고딕'],
+  ["'Nanum Myeongjo', 'AppleMyungjo', 'Batang', serif", '나눔명조'],
+  ["'Nanum Pen Script', 'Nanum Pen', cursive", '나눔손글씨 펜'],
+  ["Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic'", 'Pretendard'],
+  ['custom', '직접 입력…'],
+];
+document.querySelectorAll('select.krfont').forEach(sel => KR_FONTS.forEach(([v, t]) => sel.add(new Option(t, v))));
+const quoteFont = n => `'${String(n).replace(/['"\\;{}<>]/g, '')}'`; // 직접 입력한 이름이 CSS를 깨지 않게
 function pickFont(sel, custom) {
   if (sel === 'same') return fontStack();
-  const f = sel === 'custom' ? (custom ? `'${custom}'` : 'Jost') : sel;
+  const f = sel === 'custom' ? (custom ? quoteFont(custom) : 'Jost') : sel;
   return f + ', ' + fontStack();
 }
 const nameFontStack = () => pickFont(st.nameFont, st.customNameFont);
@@ -241,18 +232,16 @@ function css() {
 .ht{border-top:${lw}mm solid ${lc}}
 .vs{border-left:${lw}mm solid ${lc}}
 .vd{border-left:${vl}}
-.vw{border-left:${lw}mm solid ${lc}}
 .sh{background:${st.shadeColor}}
 @page{size:${st.w}mm ${st.h}mm;margin:0}
 #pages{zoom:${st.sheet!=='orig' ? st.zoom*0.5 : st.zoom}}`;
 }
 
 /* one month, drawn on a landscape canvas (h x w), then rotated onto the portrait insert */
-function trackerPage(y, m, back, flat) {
+function trackerPage(y, m, back, flat, reds) {
   const W = +st.h, H = +st.w;
   const ringTop = (st.turn === 'cw') !== !!back; // back side of a leaf: ring is on the other long edge
   const top = ringTop ? +st.mRing : +st.mFree, bot = ringTop ? +st.mFree : +st.mRing, side = +st.mEnd;
-  const reds = redSet();
   const nDays = y ? new Date(y, m, 0).getDate() : 31;
   const hasDow = st.dow !== 'none' && !!y;
   const N = Math.max(1, +st.rowsN);
@@ -276,22 +265,21 @@ function trackerPage(y, m, back, flat) {
   g += `<div class="mon" style="grid-row:1 / ${hr+1};grid-column:1">${lab}</div>`;
 
   for (let d = 1; d <= nDays; d++) {
-    const col = d + 1, real = d <= nDays;
+    const col = d + 1;
     let dowIdx = -1, cls = '';
-    if (y && real) {
+    if (y) {
       dowIdx = new Date(y, m-1, d).getDay();
       const iso = `${y}-${pad(m)}-${pad(d)}`;
       if (dowIdx === 0 || reds.has(iso)) cls = ' red';
       else if (dowIdx === 6 && st.satColor) cls = ' sat';
     }
     const wkend = st.shade && (dowIdx === 0 || dowIdx === 6);
-    const vline = d === 1 ? 'vs' : (st.weekLine && dowIdx === 0 ? 'vw' : 'vd');
+    const vline = d === 1 || (st.weekLine && dowIdx === 0) ? 'vs' : 'vd';
     if (hasDow) {
-      const t = real ? (st.dow === '1' ? DAYS[dowIdx][0] : DAYS[dowIdx].slice(0,2)) : '';
+      const t = st.dow === '1' ? DAYS[dowIdx][0] : DAYS[dowIdx].slice(0,2);
       g += `<div class="dw${cls}" style="grid-row:1;grid-column:${col}">${t}</div>`;
     }
-    g += `<div class="dt${cls}" style="grid-row:${hr};grid-column:${col}">${real ? d : ''}</div>`;
-    if (!real) continue;
+    g += `<div class="dt${cls}" style="grid-row:${hr};grid-column:${col}">${d}</div>`;
     for (let r = 0; r < N; r++) {
       g += `<div class="cell ht ${vline}${wkend ? ' sh' : ''}" style="grid-row:${hr+1+r};grid-column:${col}"></div>`;
     }
@@ -323,7 +311,7 @@ function trackerPage(y, m, back, flat) {
     });
   }
   const innerR = inner + ring;
-  if (flat) return `<section class="page solo" style="width:${st.h}mm;height:${st.w}mm"><div class="land">${innerR}</div></section>`;
+  if (flat) return `<section class="page solo" style="width:${W}mm;height:${H}mm"><div class="land">${innerR}</div></section>`;
   return `<section class="page"><div class="land" style="${tf}">${innerR}</div></section>`;
 }
 
@@ -367,46 +355,43 @@ function render() {
     for (let m = a; m <= b; m++) months.push([+st.year, m]);
   }
   const isBack = i => st.duplex === 'duplex' && i % 2 === 1; // 단면이면 모두 앞면(링이 같은 쪽)
-  const pages = months.map(([y, m], i) => trackerPage(y, m, isBack(i)));
-  let html = '', hint = '';
+  const flat = !st.outView && !printing; // 화면에서는 눕힌 방향으로 보여 줘요
+  const reds = redSet();
+  const pages = months.map(([y, m], i) => trackerPage(y, m, isBack(i), flat, reds));
+  const dyn = document.getElementById('dyn');
+  let html = '', hint;
   if (st.sheet === 'orig') {
-    html = pages.map(p => p.replace('<section class="page', '<section class="page solo')).join('');
+    if (!flat) html = pages.map(p => p.replace('class="page"', 'class="page solo"')).join('');
     hint = st.duplex === 'duplex' ? '속지 크기 그대로 저장해요. 양면이라 짝수 쪽은 뒷면으로 보고 링 쪽을 반대로 둬요.' : '속지 크기 그대로 저장해요. 단면이라 모든 쪽의 링 위치가 같아요(뒷면은 비워 둬요).';
   } else {
     const o = layout();
     const name = st.sheet.toUpperCase() + (o.land ? ' 가로' : ' 세로');
     if (st.duplex !== 'duplex') {
-      let n = 1;
-      for (let i = 0; i < pages.length; i += o.n) html += placeSheet(pages.slice(i, i + o.n), `${n++}장`, o, false);
+      if (!flat) for (let i = 0, n = 1; i < pages.length; i += o.n) html += placeSheet(pages.slice(i, i + o.n), `${n++}장`, o, false);
       hint = `${name}, 한 장에 ${o.n}쪽 · 총 ${Math.ceil(pages.length / o.n)}장. 단면으로 출력해 재단선대로 잘라요.`;
     } else {
       const leaves = [];
       for (let i = 0; i < pages.length; i += 2) leaves.push({ front: pages[i], back: pages[i+1] || '' });
-      let n = 1;
-      for (let i = 0; i < leaves.length; i += o.n) {
+      if (!flat) for (let i = 0, n = 1; i < leaves.length; i += o.n, n++) {
         const g = leaves.slice(i, i + o.n);
-        html += placeSheet(g.map(l => l.front), `${n}장 앞면`, o, false);
-        html += placeSheet(g.map(l => l.back), `${n}장 뒷면`, o, true);
-        n++;
+        html += placeSheet(g.map(l => l.front), `${n}장 앞면`, o, false) + placeSheet(g.map(l => l.back), `${n}장 뒷면`, o, true);
       }
       hint = `${name}, 낱장 한 장 앞뒤에 두 달씩 · 총 ${Math.ceil(leaves.length / o.n)}장(앞뒤). 프린터에서 양면 · <b>${o.land ? '짧은 쪽' : '긴 쪽'} 넘기기</b>로 출력하세요.`;
     }
     if (o.tooBig) hint = '<b style="color:#c8463a">속지가 용지(안전 여백 포함)보다 커요.</b> ' + hint;
-    document.getElementById('dyn').textContent += `\n@page{size:${o.W}mm ${o.H}mm;margin:0}`;
+    dyn.textContent += `\n@page{size:${o.W}mm ${o.H}mm;margin:0}`;
   }
-  if (!st.outView && !printing) {
-    html = months.map(([y, m], i) => trackerPage(y, m, isBack(i), true)).join('');
-    document.getElementById('dyn').textContent += `\n#pages{zoom:${st.zoom}}`;
-  }
+  if (flat) { html = pages.join(''); dyn.textContent += `\n#pages{zoom:${st.zoom}}`; }
   document.getElementById('sheetHint').innerHTML = hint;
   document.getElementById('pages').innerHTML = html;
-  document.getElementById('customFontRow').style.display = st.font === 'custom' ? '' : 'none';
-  document.getElementById('shadeRow').style.display = st.shade ? '' : 'none';
-  document.getElementById('customTitleFontRow').style.display = st.titleFont === 'custom' ? '' : 'none';
-  document.getElementById('fsDayRow').style.display = st.dow === 'none' ? 'none' : '';
-  document.getElementById('customNameFontRow').style.display = st.nameFont === 'custom' ? '' : 'none';
-  document.getElementById('satRow').style.display = st.satColor ? '' : 'none';
-  ['cropRow','orientRow','safeRow'].forEach(id => document.getElementById(id).style.display = st.sheet === 'orig' ? 'none' : '');
+  const show = (id, on) => document.getElementById(id).style.display = on ? '' : 'none';
+  show('customFontRow', st.font === 'custom');
+  show('customTitleFontRow', st.titleFont === 'custom');
+  show('customNameFontRow', st.nameFont === 'custom');
+  show('fsDayRow', st.dow !== 'none');
+  show('shadeRow', st.shade);
+  show('satRow', st.satColor);
+  ['cropRow','orientRow','safeRow'].forEach(id => show(id, st.sheet !== 'orig'));
   save();
 }
 
