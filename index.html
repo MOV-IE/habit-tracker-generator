@@ -34,7 +34,9 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 .sheetlbl{font-size:10px;color:#777;margin-bottom:4px}
 .sheet{overflow:hidden;background:#fff;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.12)}
 .sheet .page{position:absolute}
-.cm{position:absolute;background:#000}
+.cm{position:absolute}
+.cm.v{width:0;border-left:.15mm solid #000;margin-left:-.075mm}
+.cm.h{height:0;border-top:.15mm solid #000;margin-top:-.075mm}
 .ringstrip{position:absolute;left:0;right:0;background:rgba(139,107,88,.07);pointer-events:none}
 .ringhole{position:absolute;border-radius:50%;border:.3mm dashed #b9a597;background:#ecebe8;pointer-events:none}
 .solo{box-shadow:0 1px 6px rgba(0,0,0,.12)}
@@ -336,11 +338,12 @@ function placeSheet(slots, label, o, mirror) {
     h += html.replace('<section class="page', `<section style="left:${o.x0 + c*pw}mm;top:${o.y0 + r*ph}mm" class="page`);
   });
   if (st.crop) {
-    const g = 2, L = 5, t = .1, x1 = o.x0 + o.cols*pw, y1 = o.y0 + o.rows*ph;
-    for (let c = 0; c <= o.cols; c++) { const x = o.x0 + c*pw;
-      h += `<div class="cm" style="left:${x - t/2}mm;top:${o.y0 - g - L}mm;width:${t}mm;height:${L}mm"></div><div class="cm" style="left:${x - t/2}mm;top:${y1 + g}mm;width:${t}mm;height:${L}mm"></div>`; }
-    for (let r = 0; r <= o.rows; r++) { const y = o.y0 + r*ph;
-      h += `<div class="cm" style="left:${o.x0 - g - L}mm;top:${y - t/2}mm;width:${L}mm;height:${t}mm"></div><div class="cm" style="left:${x1 + g}mm;top:${y - t/2}mm;width:${L}mm;height:${t}mm"></div>`; }
+    // 재단선은 테두리로 그려요. 아주 가는 배경 막대는 화면 배율에 따라 사라질 수 있어서요.
+    const g = 2, L = 5, x1 = o.x0 + o.cols*pw, y1 = o.y0 + o.rows*ph;
+    const v = (x, y) => `<div class="cm v" style="left:${x}mm;top:${y}mm;height:${L}mm"></div>`;
+    const hz = (x, y) => `<div class="cm h" style="left:${x}mm;top:${y}mm;width:${L}mm"></div>`;
+    for (let c = 0; c <= o.cols; c++) { const x = o.x0 + c*pw; h += v(x, o.y0 - g - L) + v(x, y1 + g); }
+    for (let r = 0; r <= o.rows; r++) { const y = o.y0 + r*ph; h += hz(o.x0 - g - L, y) + hz(x1 + g, y); }
   }
   return `<div class="sheetwrap"><div class="sheetlbl">${label}</div><div class="sheet" style="width:${o.W - 0.2}mm;height:${o.H - 0.2}mm">${h}</div></div>`;
 }
