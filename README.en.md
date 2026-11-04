@@ -6,6 +6,8 @@ A browser-based editor (Korean UI) for making habit tracker inserts for system d
 
 **Open the editor:** https://mov-ie.github.io/habit-tracker-generator/
 
+![Preview](preview.png)
+
 ## What it makes
 
 A habit tracker you use with the insert **turned sideways**. Days 1–31 run across the long edge of the page (171mm), and each habit gets its own row. One month per page.
