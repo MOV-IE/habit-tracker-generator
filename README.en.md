@@ -1,6 +1,6 @@
 # Habit Tracker Generator
 
-**English** | [한국어](README.md)
+[한국어](README.md) | **English**
 
 A browser-based editor (Korean UI) for making habit tracker inserts for system diaries and saving them as PDFs. Nothing to install.
 
