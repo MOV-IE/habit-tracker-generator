@@ -38,7 +38,6 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 .cm.v{width:0;border-left:.15mm solid #000;margin-left:-.075mm}
 .cm.h{height:0;border-top:.15mm solid #000;margin-top:-.075mm}
 .ringstrip{position:absolute;left:0;right:0;background:rgba(139,107,88,.07);pointer-events:none}
-.ringhole{position:absolute;border-radius:50%;border:.3mm dashed #b9a597;background:#ecebe8;pointer-events:none}
 .solo{box-shadow:0 1px 6px rgba(0,0,0,.12)}
 /* page */
 .page{position:relative;overflow:hidden;background:#fff}
@@ -51,7 +50,7 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
 @media print{
   html,body{background:#fff;display:block;min-height:0 !important;height:auto !important}
   #panel{display:none}
-  .ringstrip,.ringhole{display:none !important}
+  .ringstrip{display:none !important}
   #stage{padding:0;overflow:visible}
   #pages{display:block;zoom:1 !important}
   .solo{box-shadow:none;break-after:page;page-break-after:always}
@@ -302,15 +301,11 @@ function trackerPage(y, m, back, flat, reds) {
   const tf = st.turn === 'cw'
     ? `transform:translateY(${st.h}mm) rotate(-90deg)`   // canvas top -> page left (ring side of a right-hand page)
     : `transform:translateX(${st.w}mm) rotate(90deg)`;   // canvas top -> page right
-  // 링 위치 표시 (화면에서만, 인쇄되지 않아요): 6공 바이블 규격 19-19-51-19-19mm
+  // 링 위치 표시 (화면에서만, 인쇄되지 않아요): 링 쪽 가장자리에 옅은 띠
   let ring = '';
   if (st.showRing && !printing) {
-    const band = Math.max(3, +st.mRing - 1), dia = Math.min(5, band - 1); // 링 쪽 여백 안에만 그려서 표를 가리지 않아요
-    const cx = W / 2, cy = ringTop ? band / 2 : H - band / 2;
-    ring += `<div class="ringstrip" style="top:${ringTop ? 0 : H - band}mm;height:${band}mm"></div>`;
-    [-63.5, -44.5, -25.5, 25.5, 44.5, 63.5].forEach(dx => {
-      ring += `<div class="ringhole" style="left:${cx + dx - dia/2}mm;top:${cy - dia/2}mm;width:${dia}mm;height:${dia}mm"></div>`;
-    });
+    const band = Math.max(3, +st.mRing - 1); // 링 쪽 여백 안에만 그려서 표를 가리지 않아요
+    ring = `<div class="ringstrip" style="top:${ringTop ? 0 : H - band}mm;height:${band}mm"></div>`;
   }
   const innerR = inner + ring;
   if (flat) return `<section class="page solo" style="width:${W}mm;height:${H}mm"><div class="land">${innerR}</div></section>`;
