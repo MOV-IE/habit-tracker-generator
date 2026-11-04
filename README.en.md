@@ -38,6 +38,21 @@ Your settings are saved in the browser, so they're still there next time. Click 
 
 The default font is Futura. If your computer has Futura (Macs do), it's used; otherwise the similar free font Jost is used instead. The title and habit names can each have their own font (**제목 폰트** / **습관 이름 폰트**). Habit names are often in Korean, so a Korean font such as Apple SD Gothic Neo, Malgun Gothic, a Myeongjo font, or a Nanum font works well. Any font installed on your computer (Mac or Windows) can be used by choosing **직접 입력…** (Custom) and typing its name.
 
+
+## Sudoku inserts
+
+**Open:** https://mov-ie.github.io/habit-tracker-generator/sudoku.html
+
+A sudoku editor for the same insert size (86×171mm by default). Every time it opens, and every time you press **새 퍼즐 만들기** (new puzzles), it generates a new random set.
+
+- Every puzzle is checked to have exactly one solution.
+- Four difficulty levels (easy, medium, hard, expert); “mix” gets harder toward the end.
+- One or two puzzles per page; with one, choose top or centered vertical position.
+- Answer pages at the back (six per page, filled digits in red).
+- Set the starting number to continue numbering across sets.
+- Each set has a number you can enter to rebuild the same puzzles.
+- Line color, fonts, ring margins, A4/A3 layout and single/double-sided printing work like the habit tracker.
+
 ## Automatic holiday updates
 
 Holidays live in `holidays.json`, which the page reads when it opens.
