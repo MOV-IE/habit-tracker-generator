@@ -18,7 +18,7 @@ A habit tracker you use with the insert **turned sideways**. Days 1–31 run acr
 - **Red days:** Sundays and Korean public holidays (including substitute holidays) are printed in red. Holidays are updated automatically every month (see below). You can also add your own dates.
 - **Tracker layout:** number of habit rows, habit name column width, a total column, weekday labels (off by default; s m t / su mo can be turned on), day lines (none / light / solid), a week divider before each Sunday, and weekend shading.
 - **Pre-filled habits:** enter one habit per line and the same habits are printed on every month. Leave it empty for blank rows.
-- **Fonts:** pick the main font (Futura by default) and a **separate font for habit names**. Font sizes and italics are adjustable.
+- **Fonts:** pick the main font and a **separate font for habit names**. Font sizes and italics are adjustable.
 - **Colors and lines:** line color (dark brown #5B4636 by default), line weight, text color, red-day color, Saturday color, and shading color.
 - **Ring side:** choose whether the rings sit at the top (turn the diary clockwise) or at the bottom. On the back of each leaf, the wider ring margin automatically moves to the other edge.
 - **Output:** save at insert size, or lay out several pages on A4 or A3 with crop marks, single- or double-sided.
@@ -38,7 +38,7 @@ Your settings are saved in the browser, so they're still there next time. Click 
 
 ### Fonts
 
-The default font is Futura. If your computer has Futura (Macs do), it's used; otherwise the similar free font Jost is used instead. The title and habit names can each have their own font (**제목 폰트** / **습관 이름 폰트**). Habit names are often in Korean, so a Korean font such as Apple SD Gothic Neo, Malgun Gothic, a Myeongjo font, or a Nanum font works well. Any font installed on your computer (Mac or Windows) can be used by choosing **직접 입력…** (Custom) and typing its name.
+The title and habit names can each have their own font (**제목 폰트** / **습관 이름 폰트**). Habit names are often in Korean, so a Korean font such as Apple SD Gothic Neo, Malgun Gothic, a Myeongjo font, or a Nanum font works well. Any font installed on your computer (Mac or Windows) can be used by choosing **직접 입력…** (Custom) and typing its name.
 
 ## Automatic holiday updates
 
