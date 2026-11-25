@@ -218,8 +218,6 @@ function redSet() {
 
 function css() {
   const lw = st.lineW, lc = st.lineColor;
-  // 선은 테두리 대신 안쪽 그림자로 그려요. 테두리는 인쇄할 때 1px 단위로 반올림돼서 굵기를 바꿔도 출력물이 똑같았어요.
-  const vl = st.vlines === 'none' ? '' : `${st.vlines === 'light' ? Math.max(.05, lw*.7) : lw}mm 0 0 0 ${st.vlines === 'light' ? lc + '66' : lc}`;
   document.getElementById('dyn').textContent = `
 .page{width:${st.w}mm;height:${st.h}mm;font-family:${fontStack()};color:${st.ink}}
 .land{width:${st.h}mm;height:${st.w}mm}
@@ -231,10 +229,7 @@ function css() {
 .ttl{font-family:${titleFontStack()};font-size:${st.fsTitle}pt;font-style:${st.titleItalic?'italic':'normal'};letter-spacing:.8pt;color:${st.ink};position:absolute;line-height:1;white-space:nowrap}
 .yb{position:absolute;font-size:5.5pt;letter-spacing:.3pt;color:${st.yearColor}}
 .red{color:${st.red}} .sat{color:${st.sat}}
-.ht{--t:inset 0 ${lw}mm 0 0 ${lc}}
-.vs{--l:inset ${lw}mm 0 0 0 ${lc}}
-${vl ? `.vd{--l:inset ${vl}}` : ''}
-.ht,.vs,.vd{box-shadow:var(--t,0 0 #0000),var(--l,0 0 #0000)}
+.grid{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .sh{background:${st.shadeColor}}
 @page{size:${st.w}mm ${st.h}mm;margin:0}
 #pages{zoom:${st.sheet!=='orig' ? st.zoom*0.5 : st.zoom}}`;
@@ -321,7 +316,22 @@ function trackerPage(y, m, back, flat, reds) {
   const titleH = st.title ? +st.fsTitle * 0.353 + 4.5 : 0;
   const title = st.title ? `<div class="ttl" style="left:${side}mm;top:${top}mm">${esc(st.title)}</div>` : '';
   const yb = (y && st.yearPos === 'br') ? `<div class="yb" style="right:${side}mm;bottom:${Math.max(1, bot - 3.6)}mm">${y}</div>` : '';
-  const inner = `<div class="g" style="left:${side}mm;right:${side}mm;top:${top + titleH}mm;bottom:${bot}mm;grid-template-columns:${cols};grid-template-rows:${rowsT}">${g}</div>${title}${yb}`;
+  // 선은 SVG로 그려요. 테두리는 인쇄할 때 1px 단위로 반올림되고, 안쪽 그림자는 Safari에서 칸 반대쪽 끝에 가는 선이 새어 나와요.
+  const gw = W - 2 * side, gh = H - top - titleH - bot, sumW = st.sum ? 7 : 0;
+  const dayW = (gw - st.nameW - sumW) / nDays, hdr = dowH + dateH, rowH = (gh - hdr) / N;
+  const lw = +st.lineW, lc = st.lineColor, f = v => +v.toFixed(4);
+  const vLn = (x, w, c) => `<line x1="${f(x + w / 2)}" y1="${f(hdr)}" x2="${f(x + w / 2)}" y2="${f(gh)}" stroke="${c}" stroke-width="${w}"/>`;
+  let ln = '';
+  for (let r = 0; r < N; r++) { const yy = f(hdr + r * rowH + lw / 2); ln += `<line x1="0" y1="${yy}" x2="${f(gw)}" y2="${yy}" stroke="${lc}" stroke-width="${lw}"/>`; }
+  for (let d = 1; d <= nDays; d++) {
+    const x = +st.nameW + (d - 1) * dayW;
+    const solid = d === 1 || (st.weekLine && y && new Date(y, m-1, d).getDay() === 0);
+    if (solid) ln += vLn(x, lw, lc);
+    else if (st.vlines !== 'none') ln += st.vlines === 'light' ? vLn(x, Math.max(.05, lw * .7), lc + '66') : vLn(x, lw, lc);
+  }
+  if (st.sum) ln += vLn(+st.nameW + nDays * dayW, lw, lc);
+  const grid = `<svg class="grid" viewBox="0 0 ${f(gw)} ${f(gh)}" preserveAspectRatio="none">${ln}</svg>`;
+  const inner = `<div class="g" style="left:${side}mm;right:${side}mm;top:${top + titleH}mm;bottom:${bot}mm;grid-template-columns:${cols};grid-template-rows:${rowsT}">${g}${grid}</div>${title}${yb}`;
   // rotate landscape canvas onto the portrait page
   const tf = st.turn === 'cw'
     ? `transform:translateY(${st.h}mm) rotate(-90deg)`   // canvas top -> page left (ring side of a right-hand page)
