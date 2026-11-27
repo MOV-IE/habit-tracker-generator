@@ -143,6 +143,9 @@ textarea{width:100%;height:64px;border:1px solid #ccc;border-radius:6px;padding:
     <div class="row" id="orientRow"><label>방향</label><div class="seg" data-k="orient"><button data-v="auto">자동</button><button data-v="portrait">세로</button><button data-v="landscape">가로</button></div></div>
     <div class="row" id="safeRow"><label>프린터 안전 여백 (mm)</label><input type="number" data-k="safe" step="1" min="0"></div>
     <div class="row" id="dupRow"><label>인쇄 면</label><div class="seg" data-k="duplex"><button data-v="single">단면</button><button data-v="duplex">양면</button></div></div>
+    <div class="row" id="backXRow"><label>뒷면 가로 보정 (mm)</label><input type="number" data-k="backX" step=".1"></div>
+    <div class="row" id="backYRow"><label>뒷면 세로 보정 (mm)</label><input type="number" data-k="backY" step=".1"></div>
+    <p class="hint" id="backHint">양면 인쇄에서 뒷면이 앞면과 어긋날 때 뒷면만 옮겨요. 가로는 + 가 오른쪽, 세로는 + 가 아래쪽이에요 (뒷면을 바라본 방향). 시험 인쇄 후 재단선이 어긋난 만큼 반대로 넣으세요.</p>
     <div class="row" id="cropRow"><label>재단선</label><input type="checkbox" data-k="crop"></div>
     <p class="hint" id="sheetHint"></p>
   </fieldset>
@@ -170,7 +173,7 @@ const DEFAULTS = {
   lineColor:'#5b4636', lineW:.15, ink:'#2b2b2b', red:'#c8463a', yearColor:'#888888', shadeColor:'#f4efeb', satColor:false, sat:'#3a62a8',
   holidays:true, extraRed:'',
   w:86, h:171, mRing:7, mFree:5, mEnd:5, turn:'cw',
-  sheet:'orig', orient:'auto', safe:5, duplex:'single', crop:true, zoom:1.8, outView:false, showRing:true
+  sheet:'orig', orient:'auto', safe:5, duplex:'single', backX:0, backY:0, crop:true, zoom:1.8, outView:false, showRing:true
 };
 const KEY = 'habit-tracker-editor-v3';
 let st = {...DEFAULTS};
@@ -374,6 +377,9 @@ function placeSheet(slots, label, o, mirror) {
     for (let r = 0; r <= o.rows; r++) { const y = o.y0 + r*ph; d += `M0 ${y}H${o.x0 - g}M${x1 + g} ${y}H${o.W}`; }
     h += `<svg class="cm" viewBox="0 0 ${o.W} ${o.H}" style="left:0;top:0;width:${o.W}mm;height:${o.H}mm"><path d="${d}" stroke="#000" stroke-width=".1" fill="none"/></svg>`;
   }
+  // 뒷면 위치 보정: 프린터가 양면에서 뒷면을 밀어 찍을 때, 뒷면 전체(속지와 재단선)를 반대로 옮겨요
+  const bx = mirror ? +st.backX || 0 : 0, by = mirror ? +st.backY || 0 : 0;
+  if (bx || by) h = `<div style="position:absolute;left:0;top:0;width:100%;height:100%;transform:translate(${bx}mm,${by}mm)">${h}</div>`;
   return `<div class="sheetwrap"><div class="sheetlbl">${label}</div><div class="sheet" style="width:${o.W - 0.2}mm;height:${o.H - 0.2}mm">${h}</div></div>`;
 }
 
@@ -424,6 +430,7 @@ function render() {
   show('shadeRow', st.shade);
   show('satRow', st.satColor);
   ['cropRow','orientRow','safeRow'].forEach(id => show(id, st.sheet !== 'orig'));
+  ['backXRow','backYRow','backHint'].forEach(id => document.getElementById(id).style.display = st.sheet !== 'orig' && st.duplex === 'duplex' ? '' : 'none');
   save();
 }
 

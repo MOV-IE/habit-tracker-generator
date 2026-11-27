@@ -68,6 +68,7 @@ Without a key, the update is simply skipped and the page keeps working with the 
 **Double-sided printing**
 - With **double-sided** layout, each leaf gets two months back to back, e.g. January on the front and February on the back.
 - Print portrait layouts with **flip on long edge** and landscape layouts with **flip on short edge**. The panel tells you which.
+- If the back is slightly off from the front, enter values in **back offset X / Y (mm)**. On A4 / A5 double-sided layouts this shifts only the back sheets. Positive X moves right and positive Y moves down, as seen looking at the back. Print a test sheet, hold it to the light, and enter the crop-mark offset in the opposite direction.
 
 **Cutting and paper**
 - Print one sheet first and check the size with a ruler.
