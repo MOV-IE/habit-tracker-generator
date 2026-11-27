@@ -18,7 +18,7 @@ A habit tracker you use with the insert **turned sideways**. Days 1–31 run acr
 - **Red days:** Sundays and Korean public holidays (including substitute holidays) are printed in red. Holidays are updated automatically every month (see below). You can also add your own dates.
 - **Tracker layout:** number of habit rows, habit name column width, a total column, weekday labels (off by default; s m t / su mo can be turned on), day lines (none / light / solid), a week divider before each Sunday, and weekend shading.
 - **Pre-filled habits:** enter one habit per line and the same habits are printed on every month. Leave it empty for blank rows.
-- **Colors and lines:** line color (dark brown #5B4636 by default), line weight, text color, red-day color, Saturday color, and shading color. The line weight carries through to the printout.
+- **Colors and lines:** line color (#1A1A1A by default), line weight, text color, red-day color, Saturday color, and shading color. The line weight carries through to the printout. Colors can be picked or typed as a hex code (#1A1A1A).
 - **Ring side:** choose whether the rings sit at the top (turn the diary clockwise) or at the bottom. On the back of each leaf, the wider ring margin automatically moves to the other edge.
 - **Ring position:** the preview shows the ring area as a light band with dashed lines and outlined holes (6-ring bible layout). It is screen-only and never prints.
 - **Output:** save at insert size, or lay out several pages on A4 or A5 with crop marks, single- or double-sided.
